@@ -8,10 +8,8 @@
 "support Setext-style headers in contents
 "user should choose 'contents' header type
 
-
 " defining the path of the plugin
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
-
 
 "check for user defined values
 if ! exists('markcont_title')
@@ -24,9 +22,13 @@ endif
 
 function s:MarkCont()
     " get the current edited file
-    let s:file_path = expand("%:p")
-    execute ':r !python ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab
-    execute "normal! gg/" . g:markcont_title . "\<cr>"
+    if search(g:markcont_title, 'Wnc') == 0 && search(g:markcont_title, 'Wnb') == 0
+      let s:file_path = expand("%:p")
+      execute ':r !python ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab
+      execute "normal! gg/" . g:markcont_title . "\<cr>"
+    else
+      call b:MarkUpdate()
+    endif
 endfunction
 
 command MarkCont call s:MarkCont()
@@ -37,8 +39,7 @@ function! b:MarkUpdate()
     if search(g:markcont_title, 'W') == 0
       echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
     else
-      execute "normal! gg/" . g:markcont_title . "\<cr>"
-      execute "normal! v/-------------\<cr>njdk"
+      call b:MarkRemove()
       call s:MarkCont()
       echo "Contents Updated!"
     endif
@@ -51,8 +52,7 @@ function! b:MarkRemove()
       echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
     else
       execute "normal! gg/" . g:markcont_title . "\<cr>"
-      execute "normal! v/-------------\<cr>njdk"
-      echo "Contents Removed!"
+      execute "normal! v/-------------\<cr>n$dk"
     endif
 endfunction
 command MarkRemove call b:MarkRemove()
@@ -64,11 +64,11 @@ function! b:MarkGoto()
     if search(s:list_regex, 'Wc', line("w$")) == 0
       echo 'It seems that you are not in Content list'
     else
+      execute "normal! 0v/-\<cr>h" . '"by'
       if len(@b) < g:markcont_tab || (@b) !~ '^[ ]\+$'
         echo "I think indentation is wrong. see g:markcont_tab for setting tab value."
         return
       endif
-      execute "normal! 0v/-\<cr>h" . '"by'
       let l:level=len(@b)/g:markcont_tab
       execute "normal! f[vi[" . '"by'
       let l:key=(@b)
