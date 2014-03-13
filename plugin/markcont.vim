@@ -5,9 +5,12 @@
 "#add update contetnt command
 "#add remove contetnt command
 "#add goto for content list
-"set header level
+"#set header level
 "support Setext-style headers in contents
 "user should choose 'contents' header type
+
+"Note: I reserved level 1 indentation for setext-style headers and it seems that
+"i'm not going to add that functionality soon so i just changed defaults for now"
 
 " defining the path of the plugin
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
@@ -20,9 +23,9 @@ endif
 if ! exists('markcont_tab')
   let g:markcont_tab = '4'
 endif
-
+" max shuld be 6
 if ! exists('markcont_level')
-  let g:markcont_level = '6'
+  let g:markcont_level = '2'
 endif
 
 function s:MarkCont()
@@ -69,12 +72,17 @@ function! b:MarkGoto()
     if search(s:list_regex, 'Wc', line("w$")) == 0
       echo 'It seems that you are not in Content list'
     else
-      execute "normal! 0v/-\<cr>h" . '"by'
-      if len(@b) < g:markcont_tab || (@b) !~ '^[ ]\+$'
-        echo "I think indentation is wrong. see g:markcont_tab for setting tab value."
-        return
+      execute "normal! 0v" . '"by'
+      if (@b) == "-"
+        let l:level=1
+      else
+        execute "normal! 0v/-\<cr>h" . '"by'
+        if len(@b) < g:markcont_tab || (@b) !~ '^[ ]\+$'
+          echo "I think indentation is wrong. see g:markcont_tab for setting tab value."
+          return
+        endif
+        let l:level=(len(@b)/g:markcont_tab) + 1
       endif
-      let l:level=len(@b)/g:markcont_tab
       execute "normal! f[vi[" . '"by'
       let l:key=(@b)
       try
