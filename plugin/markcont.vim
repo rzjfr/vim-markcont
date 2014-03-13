@@ -22,7 +22,7 @@ if ! exists('markcont_tab')
   let g:markcont_tab = '4'
 endif
 
-function! s:MarkCont()
+function s:MarkCont()
     " get the current edited file
     let s:file_path = expand("%:p")
     execute ':r !python ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab
@@ -56,3 +56,27 @@ function! b:MarkRemove()
     endif
 endfunction
 command MarkRemove call b:MarkRemove()
+
+let s:list_regex='\v([ ]*)- \[(.+)\]\(#.+\)'
+
+function! b:MarkGoto()
+    normal 0zR
+    if search(s:list_regex, 'Wc', line("w$")) == 0
+      echo 'It seems that you are not in Content list'
+    else
+      if len(@b) < g:markcont_tab || (@b) !~ '^[ ]\+$'
+        echo "I think indentation is wrong. see g:markcont_tab for setting tab value."
+        return
+      endif
+      execute "normal! 0v/-\<cr>h" . '"by'
+      let l:level=len(@b)/g:markcont_tab
+      execute "normal! f[vi[" . '"by'
+      let l:key=(@b)
+      try
+        execute "normal! /^#" . '\{' . l:level . '}\%[ ]' . l:key . "\<cr>"
+      catch /E486:/
+        echo 'It seems you do not have that heading anymore. try :MarkUpdate'
+      endtry
+    endif
+endfunction
+command MarkGoto call b:MarkGoto()
