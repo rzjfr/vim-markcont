@@ -4,7 +4,8 @@
 "#make a command to insert the contetns
 "#add update contetnt command
 "#add remove contetnt command
-"add goto for content list
+"#add goto for content list
+"set header level
 "support Setext-style headers in contents
 "user should choose 'contents' header type
 
@@ -20,11 +21,15 @@ if ! exists('markcont_tab')
   let g:markcont_tab = '4'
 endif
 
+if ! exists('markcont_level')
+  let g:markcont_level = '6'
+endif
+
 function s:MarkCont()
     " get the current edited file
     if search(g:markcont_title, 'Wnc') == 0 && search(g:markcont_title, 'Wnb') == 0
       let s:file_path = expand("%:p")
-      execute ':r !python ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab
+      execute ':r !python2 ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab . " " . g:markcont_level
       execute "normal! gg/" . g:markcont_title . "\<cr>"
     else
       call b:MarkUpdate()

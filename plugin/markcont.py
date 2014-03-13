@@ -5,6 +5,7 @@ import re
 
 print argv[2]
 tab = int(argv[3])
+end = argv[4]
 print "-------------"
 
 try:
@@ -15,7 +16,7 @@ except IOError:
 
 junks = re.compile(r'[ #]+$', re.MULTILINE)
 
-headers = re.compile(r'(^[#]{1,6})(.+)', re.MULTILINE)
+headers = re.compile(r'(^[#]{1,' + end + '})(?!#)(.+)', re.MULTILINE)
 
 
 for i in re.finditer(headers, text):
