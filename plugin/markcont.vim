@@ -4,19 +4,16 @@
 "#make a command to insert the contetns
 "#add update contetnt command
 "#add remove contetnt command
+"add goto for content list
 "support Setext-style headers in contents
 "user should choose 'contents' header type
 
 
 " defining the path of the plugin
-" :p modifier makes the pathname absolute
-" :h suffix drops the last pathname component
-let g:plugin_path = escape(expand('<sfile>:p:h'), '\')
+let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
-" get the current edited file
-" % says the current file and
-let g:current_file = fnamemodify("%", ":p")
 
+"check for user defined values
 if ! exists('markcont_title')
   let g:markcont_title = 'Contents'
 endif
@@ -26,7 +23,9 @@ if ! exists('markcont_tab')
 endif
 
 function! s:MarkCont()
-    execute ':r !python ' . g:plugin_path . '/markcont.py ' . g:current_file . ' "' . g:markcont_title . '" ' . g:markcont_tab
+    " get the current edited file
+    let s:file_path = expand("%:p")
+    execute ':r !python ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab
     execute "normal! gg/" . g:markcont_title . "\<cr>"
 endfunction
 
