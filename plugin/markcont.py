@@ -22,6 +22,7 @@ for i in re.finditer(headers, text):
     line_number = text.count('\n', 0, i.start()) + 1
     indent = len(i.group(1))
     tag = re.sub(junks, '', i.group(2)).lstrip()
-    print " "*indent*4, "- [%s](#%s)" % (tag, tag.lower().replace(' ', '-'))
+    space = " "*indent*tab
+    print "%s- [%s](#%s)" % (space, tag, tag.lower().replace(' ', '-'))
 
 print "-------------"
