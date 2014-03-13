@@ -3,6 +3,10 @@
 from sys import argv
 import re
 
+print argv[2]
+tab = int(argv[3])
+print "-------------"
+
 try:
     with open(argv[1], 'r') as f:
         text = f.read()
@@ -19,3 +23,5 @@ for i in re.finditer(headers, text):
     indent = len(i.group(1))
     tag = re.sub(junks, '', i.group(2)).lstrip()
     print " "*indent*4, "- [%s](#%s)" % (tag, tag.lower().replace(' ', '-'))
+
+print "-------------"
