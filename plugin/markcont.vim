@@ -10,14 +10,14 @@
 "user should choose 'contents' header type
 
 "Note: I reserved level 1 indentation for setext-style headers and it seems that
-"i'm not going to add that functionality soon so i just changed defaults for now"
+"i'm not going to add that functionality soon. so i just changed defaults for now"
 
 " defining the path of the plugin
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
 "check for user defined values
 if ! exists('markcont_title')
-  let g:markcont_title = 'Contents'
+  let g:markcont_title = ' Contents'
 endif
 
 if ! exists('markcont_tab')
@@ -31,6 +31,8 @@ endif
 function s:MarkCont()
     " get the current edited file
     if search(g:markcont_title, 'Wnc') == 0 && search(g:markcont_title, 'Wnb') == 0
+      "mark the table location to variable c
+      execute "normal! mc"
       let s:file_path = expand("%:p")
       execute ':r !python2 ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab . " " . g:markcont_level
       execute "normal! gg/" . g:markcont_title . "\<cr>"
