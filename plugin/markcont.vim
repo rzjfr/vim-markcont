@@ -29,26 +29,21 @@ if ! exists('markcont_level')
 endif
 
 function s:MarkCont()
-    " get the current edited file
-    if search(g:markcont_title, 'Wnc') == 0 && search(g:markcont_title, 'Wnb') == 0
-      "mark the table location to variable c
-      execute "normal! mc"
-      let s:file_path = expand("%:p")
-      execute ':r !python2 ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab . " " . g:markcont_level
-      execute "normal! gg/" . g:markcont_title . "\<cr>"
-    else
-      call b:MarkUpdate()
-    endif
+    execute "normal! mc"
+    let s:file_path = expand("%:p")
+    execute ':r !python2 ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab . " " . g:markcont_level
+    execute "normal! gg/" . g:markcont_title . "\<cr>"
 endfunction
 
 command MarkCont call s:MarkCont()
 
 function! b:MarkUpdate()
-    "you should save current buffer before updating content
     call cursor(1, 1)
+    normal 0zR
     if search(g:markcont_title, 'W') == 0
       echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
     else
+      execute 'silent update'
       call b:MarkRemove()
       call s:MarkCont()
       echo "Contents Updated!"
@@ -58,6 +53,7 @@ command MarkUpdate call b:MarkUpdate()
 
 function! b:MarkRemove()
     call cursor(1, 1)
+    normal 0zR
     if search(g:markcont_title, 'W') == 0
       echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
     else
@@ -74,6 +70,7 @@ function! b:MarkGoto()
     if search(s:list_regex, 'Wc', line("w$")) == 0
       echo 'It seems that you are not in Content list'
     else
+      let l:regback=(@")
       execute "normal! 0v" . '"by'
       if (@b) == "-"
         let l:level=1
@@ -89,6 +86,7 @@ function! b:MarkGoto()
       let l:key=(@b)
       try
         execute "normal! /^#" . '\{' . l:level . '}\%[ ]' . l:key . "\<cr>"
+        let @"=l:regback
       catch /E486:/
         echo 'It seems you do not have that heading anymore. try :MarkUpdate'
       endtry
