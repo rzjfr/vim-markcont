@@ -96,6 +96,7 @@ command MarkGoto call b:MarkGoto()
 
 function! MarkEnterMap()
   "noremap <expr> <Enter> MarkEnterMapMap()"
+  normal 0
   if search(s:list_regex, 'Wc', line(".")) == 0
     return ''
   else
