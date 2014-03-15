@@ -67,7 +67,7 @@ let s:list_regex='\v([ ]*)- \[(.+)\]\(#.+\)'
 
 function! b:MarkGoto()
     normal 0zR
-    if search(s:list_regex, 'Wc', line("w$")) == 0
+    if search(s:list_regex, 'Wc', line(".")) == 0
       echo 'It seems that you are not in Content list'
     else
       let l:regback=(@")
@@ -93,3 +93,12 @@ function! b:MarkGoto()
     endif
 endfunction
 command MarkGoto call b:MarkGoto()
+
+function! MarkEnterMap()
+  "noremap <expr> <Enter> MarkEnterMapMap()"
+  if search(s:list_regex, 'Wc', line(".")) == 0
+    return ''
+  else
+    return ':MarkGoto'
+  endif
+endfunction
