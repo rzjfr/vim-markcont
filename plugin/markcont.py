@@ -1,5 +1,3 @@
-# http://daringfireball.net/projects/markdown/syntax#header
-
 from sys import argv
 import re
 
@@ -18,7 +16,6 @@ junks = re.compile(r'[ #]+$', re.MULTILINE)
 
 headers = re.compile(r'(^[#]{1,' + end + '})(?!#)(.+)', re.MULTILINE)
 
-
 for i in re.finditer(headers, text):
     line_number = text.count('\n', 0, i.start()) + 1
     indent = len(i.group(1)) - 1
@@ -26,4 +23,4 @@ for i in re.finditer(headers, text):
     space = " "*indent*tab
     print "%s- [%s](#%s)" % (space, tag, tag.lower().replace(' ', '-'))
 
-print "-------------"
+print "\n-------------"
