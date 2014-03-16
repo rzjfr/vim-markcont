@@ -9,9 +9,6 @@
 "support Setext-style headers in contents
 "user should choose 'contents' header type
 
-"Note: I reserved level 1 indentation for setext-style headers and it seems that
-"i'm not going to add that functionality soon. so i just changed defaults for now"
-
 " defining the path of the plugin
 let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
@@ -29,19 +26,12 @@ if ! exists('markcont_level')
 endif
 
 function s:MarkCont()
-    execute "normal! mc"
-    let s:file_path = expand("%:p")
-    execute ':r !python2 ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab . " " . g:markcont_level
-    execute "normal! gg/" . g:markcont_title . "\<cr>"
-endfunction
-
-command MarkCont call s:MarkCont()
-
-function! b:MarkUpdate()
-    call cursor(1, 1)
     normal 0zR
-    if search(g:markcont_title, 'W') == 0
-      echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
+    if search(g:markcont_title, 'Wc') == 0 && search(g:markcont_title, 'Wb') == 0
+      execute "normal! mc"
+      let s:file_path = expand("%:p")
+      execute ':r !python2 ' . s:plugin_path . '/markcont.py ' . s:file_path . ' "' . g:markcont_title . '" ' . g:markcont_tab . " " . g:markcont_level
+      execute "normal! gg/" . g:markcont_title . "\<cr>"
     else
       execute 'silent update'
       call b:MarkRemove()
@@ -49,12 +39,17 @@ function! b:MarkUpdate()
       echo "Contents Updated!"
     endif
 endfunction
+
+command MarkCont call s:MarkCont()
+
+function! b:MarkUpdate()
+      call s:MarkCont()
+endfunction
 command MarkUpdate call b:MarkUpdate()
 
 function! b:MarkRemove()
-    call cursor(1, 1)
     normal 0zR
-    if search(g:markcont_title, 'W') == 0
+    if search(g:markcont_title, 'Wc') == 0 && search(g:markcont_title, 'Wb') == 0
       echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
     else
       execute "normal! gg/" . g:markcont_title . "\<cr>"
