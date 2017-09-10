@@ -1,4 +1,5 @@
-# Vim Markdown Table of   this vim plugin creates a table of contents for markdown file based on headers.
+# Vim MarkCont
+  a vim plugin to create a table of contents for markdown file based on headers.
   you can remove and update contents. it uses a script written in python2.
 
     Note: only Atx-style headers are supported.
