@@ -14,7 +14,7 @@ let s:plugin_path = escape(expand('<sfile>:p:h'), '\')
 
 "check for user defined values
 if ! exists('markcont_title')
-  let g:markcont_title = ' Contents'
+  let g:markcont_title = 'Contents'
 endif
 
 if ! exists('markcont_tab')
@@ -34,33 +34,32 @@ function s:MarkCont()
       execute "normal! gg/" . g:markcont_title . "\<cr>"
     else
       execute 'silent update'
-      call b:MarkRemove()
+      call MarkRemove()
       call s:MarkCont()
-      echo "Contents Updated!"
     endif
 endfunction
 
 command MarkCont call s:MarkCont()
 
-function! b:MarkUpdate()
+function! MarkUpdate()
       call s:MarkCont()
 endfunction
-command MarkUpdate call b:MarkUpdate()
+command MarkUpdate call MarkUpdate()
 
-function! b:MarkRemove()
+function! MarkRemove()
     normal 0zR
     if search(g:markcont_title, 'Wc') == 0 && search(g:markcont_title, 'Wb') == 0
-      echo 'It seems there is no Auto generated Content. use :MarkCont to create one.'
+      echo 'There is no Auto generated table or youve changed its title. use :MarkCont to create one or change g:markcont_title.'
     else
       execute "normal! gg/" . g:markcont_title . "\<cr>"
       execute "normal! v/-------------\<cr>n$dk"
     endif
 endfunction
-command MarkRemove call b:MarkRemove()
+command MarkRemove call MarkRemove()
 
 let s:list_regex='\v([ ]*)- \[(.+)\]\(#.+\)'
 
-function! b:MarkGoto()
+function! MarkGoto()
     normal 0zR
     if search(s:list_regex, 'Wc', line(".")) == 0
       echo 'It seems that you are not in Content list'
@@ -87,7 +86,7 @@ function! b:MarkGoto()
       endtry
     endif
 endfunction
-command MarkGoto call b:MarkGoto()
+command MarkGoto call MarkGoto()
 
 function! MarkEnterMap()
   "noremap <expr> <Enter> MarkEnterMapMap()"
